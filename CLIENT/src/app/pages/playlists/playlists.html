@@ -1,0 +1,92 @@
+<div class="etmw-container songs-page">
+    <header class="songs-page-header">
+        <div class="songs-page-header__copy">
+            <span class="songs-eyebrow">Your collections</span>
+            <h1 class="songs-title">Playlists</h1>
+            <p class="songs-subtitle">
+                Group songs into a set and let them play one after another. Perfect for a mood, a story, or a long evening.
+            </p>
+        </div>
+        <div class="songs-actions">
+            <a routerLink="/library" class="songs-btn songs-btn--ghost">Back to library</a>
+        </div>
+    </header>
+
+    <section class="playlists-create songs-card">
+        <div>
+            <h2>New playlist</h2>
+            <p>Give it a name now. You can add songs from your library at any time.</p>
+        </div>
+        <div class="playlists-create__form">
+            <input
+                class="songs-input"
+                type="text"
+                maxlength="80"
+                placeholder="Late night drive…"
+                [ngModel]="newName()"
+                (ngModelChange)="newName.set($event)"
+                (keydown.enter)="create()"
+            />
+            <button type="button" class="songs-btn songs-btn--primary" [disabled]="creating() || !newName().trim()" (click)="create()">
+                {{ creating() ? 'Creating…' : 'Create playlist' }}
+            </button>
+        </div>
+    </section>
+
+    @if (loading()) {
+        <div class="songs-loading"><span class="songs-spinner"></span> Loading playlists…</div>
+    } @else if (error()) {
+        <div class="songs-empty">
+            <h3>We could not load your playlists.</h3>
+            <p>{{ error() }}</p>
+            <button type="button" class="songs-btn songs-btn--primary" (click)="load()">Try again</button>
+        </div>
+    } @else if (playlists().length === 0) {
+        <div class="songs-empty">
+            <h3>No playlists yet.</h3>
+            <p>Create one above, then add songs from your library. Playlists play through automatically.</p>
+        </div>
+    } @else {
+        <div class="playlists-grid">
+            @for (playlist of playlists(); track playlist.id) {
+                <article class="playlist-card">
+                    <div class="playlist-card__cover" [style]="artStyle(playlist)">
+                        <span class="playlist-card__note">♫</span>
+                        <span class="playlist-card__count">{{ playlist.songCount }}</span>
+                    </div>
+                    <div class="playlist-card__body">
+                        <h3>{{ playlist.name }}</h3>
+                        <p>{{ playlist.songCount }} {{ playlist.songCount === 1 ? 'song' : 'songs' }} · {{ createdLabel(playlist) }}</p>
+                        <div class="playlist-card__actions">
+                            <button type="button" class="songs-btn songs-btn--primary songs-btn--sm" (click)="playAll(playlist)">
+                                <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M8 5v14l11-7z"/></svg>
+                                Play all
+                            </button>
+                            <a class="songs-btn songs-btn--ghost songs-btn--sm" [routerLink]="['/playlists', playlist.id]">Open</a>
+                            <button type="button" class="playlist-card__delete" (click)="pendingDelete.set(playlist)" aria-label="Delete playlist">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </article>
+            }
+        </div>
+    }
+</div>
+
+@if (pendingDelete(); as playlist) {
+    <div class="songs-modal-backdrop" (click)="pendingDelete.set(null)">
+        <div class="songs-modal" (click)="$event.stopPropagation()">
+            <h2>Delete “{{ playlist.name }}”?</h2>
+            <p class="songs-modal__lead">The playlist will be removed. The songs inside it stay in your library.</p>
+            <div class="songs-modal__actions">
+                <button type="button" class="songs-btn songs-btn--ghost" (click)="pendingDelete.set(null)">Keep it</button>
+                <button type="button" class="songs-btn songs-btn--danger" (click)="confirmDelete()">Delete playlist</button>
+            </div>
+        </div>
+    </div>
+}
+
+@if (toast(); as message) {
+    <div class="songs-toast">{{ message }}</div>
+}

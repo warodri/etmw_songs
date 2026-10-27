@@ -1,0 +1,17 @@
+.env.deploy
+SERVER/.env
+SERVER/node_modules/
+SERVER/dist/
+SERVER/storage/
+SERVER/logs/
+CLIENT/node_modules/
+CLIENT/dist/
+.venv/
+ckpt/
+outputs/
+__pycache__/
+*.log
+*.mp3
+.DS_Store
+.angular/
+temp-assets/

@@ -1,0 +1,58 @@
+<article class="song-card" [class.song-card--current]="isCurrent">
+    <div class="song-card__cover" [style]="artStyle">
+        <div class="song-card__wave">
+            @for (bar of [18, 34, 52, 28, 66, 42, 74, 38, 56, 24, 48, 30]; track $index) {
+                <span [style.height.%]="bar"></span>
+            }
+        </div>
+        <button type="button" class="song-card__play" (click)="play.emit()" [attr.aria-label]="'Play ' + song.title">
+            @if (isCurrent && isPlaying) {
+                <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M7 5h4v14H7zm6 0h4v14h-4z"/></svg>
+            } @else {
+                <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M8 5v14l11-7z"/></svg>
+            }
+        </button>
+        <span class="song-card__duration">{{ formatDuration(song.durationSeconds) }}</span>
+    </div>
+
+    <div class="song-card__body">
+        <div class="song-card__top">
+            <h3 class="song-card__title" [title]="song.title">{{ song.title }}</h3>
+
+            <details class="song-card__menu" #menu>
+                <summary aria-label="Song actions">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+                </summary>
+                <div class="song-card__menu-panel">
+                    <span class="song-card__menu-label">Add to playlist</span>
+                    @if (playlists.length === 0) {
+                        <span class="song-card__menu-empty">No playlists yet</span>
+                    } @else {
+                        @for (playlist of playlists; track playlist.id) {
+                            <button type="button" (click)="menu.open = false; add.emit(playlist.id)">
+                                {{ playlist.name }}
+                            </button>
+                        }
+                    }
+                    <button type="button" class="danger" (click)="menu.open = false; delete.emit()">
+                        Delete song
+                    </button>
+                </div>
+            </details>
+        </div>
+
+        <div class="song-card__tags">
+            @for (tag of song.tags.slice(0, 3); track tag) {
+                <span>{{ tag }}</span>
+            }
+            @if (song.tags.length > 3) {
+                <span>+{{ song.tags.length - 3 }}</span>
+            }
+        </div>
+
+        <div class="song-card__meta">
+            <span>{{ createdLabel }}</span>
+            <span>{{ song.seed !== null ? 'seed ' + song.seed : 'AI generated' }}</span>
+        </div>
+    </div>
+</article>

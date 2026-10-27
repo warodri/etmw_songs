@@ -1,0 +1,126 @@
+<div class="etmw-container songs-page">
+    <a routerLink="/playlists" class="playlist-back">← All playlists</a>
+
+    @if (loading()) {
+        <div class="songs-loading"><span class="songs-spinner"></span> Opening playlist…</div>
+    } @else if (error()) {
+        <div class="songs-empty">
+            <h3>Playlist not found.</h3>
+            <p>{{ error() }}</p>
+            <a routerLink="/playlists" class="songs-btn songs-btn--primary">Back to playlists</a>
+        </div>
+    } @else if (playlist(); as current) {
+        <header class="playlist-header">
+            <div class="playlist-header__copy">
+                <span class="songs-eyebrow">Playlist</span>
+                @if (renaming()) {
+                    <div class="playlist-rename">
+                        <input class="songs-input" type="text" maxlength="80" [ngModel]="nameInput()" (ngModelChange)="nameInput.set($event)" (keydown.enter)="saveRename()" (keydown.escape)="renaming.set(false)" />
+                        <button type="button" class="songs-btn songs-btn--primary songs-btn--sm" (click)="saveRename()">Save</button>
+                        <button type="button" class="songs-btn songs-btn--ghost songs-btn--sm" (click)="renaming.set(false)">Cancel</button>
+                    </div>
+                } @else {
+                    <h1 class="songs-title" (dblclick)="startRename()">{{ current.name }}</h1>
+                }
+                <p class="songs-subtitle">
+                    {{ current.songs.length }} {{ current.songs.length === 1 ? 'song' : 'songs' }} ·
+                    {{ formatDuration(totalDuration()) }} total
+                </p>
+            </div>
+
+            <div class="songs-actions">
+                <button type="button" class="songs-btn songs-btn--primary" (click)="playAll()">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15"><path d="M8 5v14l11-7z"/></svg>
+                    Play all
+                </button>
+                <button type="button" class="songs-btn songs-btn--ghost" (click)="openAdd()">Add songs</button>
+                <button type="button" class="songs-btn songs-btn--ghost songs-btn--sm" (click)="startRename()">Rename</button>
+                <button type="button" class="songs-btn songs-btn--danger songs-btn--sm" (click)="pendingDelete.set(true)">Delete</button>
+            </div>
+        </header>
+
+        @if (current.songs.length === 0) {
+            <div class="songs-empty">
+                <h3>This playlist is empty.</h3>
+                <p>Add songs from your library to start building the flow.</p>
+                <button type="button" class="songs-btn songs-btn--primary" (click)="openAdd()">Add songs</button>
+            </div>
+        } @else {
+            <div class="playlist-tracks">
+                @for (song of current.songs; track song.id; let i = $index) {
+                    <article class="playlist-track" [class.playlist-track--current]="isCurrent(song)">
+                        <span class="playlist-track__index">{{ (i + 1).toString().padStart(2, '0') }}</span>
+                        <button type="button" class="playlist-track__play" (click)="playSong(song)" [attr.aria-label]="'Play ' + song.title">
+                            @if (isCurrent(song) && player.isPlaying()) {
+                                <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M7 5h4v14H7zm6 0h4v14h-4z"/></svg>
+                            } @else {
+                                <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M8 5v14l11-7z"/></svg>
+                            }
+                        </button>
+                        <div class="playlist-track__copy">
+                            <strong>{{ song.title }}</strong>
+                            <div class="playlist-track__tags">
+                                @for (tag of song.tags.slice(0, 4); track tag) {
+                                    <span>{{ tag }}</span>
+                                }
+                            </div>
+                        </div>
+                        <span class="playlist-track__duration">{{ formatDuration(song.durationSeconds) }}</span>
+                        <div class="playlist-track__actions">
+                            <button type="button" (click)="move(song, -1)" [disabled]="i === 0" aria-label="Move up">↑</button>
+                            <button type="button" (click)="move(song, 1)" [disabled]="i === current.songs.length - 1" aria-label="Move down">↓</button>
+                            <button type="button" class="danger" (click)="removeSong(song)" aria-label="Remove from playlist">×</button>
+                        </div>
+                    </article>
+                }
+            </div>
+        }
+    }
+</div>
+
+@if (showAdd()) {
+    <div class="songs-modal-backdrop" (click)="showAdd.set(false)">
+        <div class="songs-modal" (click)="$event.stopPropagation()">
+            <h2>Add songs</h2>
+            <p class="songs-modal__lead">Pick from your library. Songs already in this playlist are hidden.</p>
+            <input class="songs-input" type="search" placeholder="Search your library…" [ngModel]="addSearch()" (ngModelChange)="addSearch.set($event)" />
+
+            <div class="playlist-add-list">
+                @if (availableSongs().length === 0) {
+                    <p class="playlist-add-empty">No more songs to add.</p>
+                } @else {
+                    @for (song of availableSongs(); track song.id) {
+                        <div class="playlist-add-row">
+                            <div>
+                                <strong>{{ song.title }}</strong>
+                                <span>{{ song.tags.slice(0, 3).join(' · ') }}</span>
+                            </div>
+                            <button type="button" class="songs-btn songs-btn--primary songs-btn--sm" (click)="addSong(song)">Add</button>
+                        </div>
+                    }
+                }
+            </div>
+
+            <div class="songs-modal__actions">
+                <button type="button" class="songs-btn songs-btn--ghost" (click)="showAdd.set(false)">Done</button>
+            </div>
+        </div>
+    </div>
+}
+
+@if (pendingDelete()) {
+    <div class="songs-modal-backdrop" (click)="pendingDelete.set(false)">
+        <div class="songs-modal" (click)="$event.stopPropagation()">
+            <h2>Delete this playlist?</h2>
+            <p class="songs-modal__lead">The playlist will be removed. The songs inside it stay in your library.</p>
+            <div class="songs-modal__actions">
+                <button type="button" class="songs-btn songs-btn--ghost" (click)="pendingDelete.set(false)">Keep it</button>
+                <button type="button" class="songs-btn songs-btn--danger" (click)="deletePlaylist()">Delete playlist</button>
+            </div>
+        </div>
+    </div>
+}
+
+@if (toast(); as message) {
+    <div class="songs-toast">{{ message }}</div>
+}

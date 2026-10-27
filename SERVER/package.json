@@ -1,0 +1,35 @@
+{
+    "name": "etmw-songs-server",
+    "version": "1.0.0",
+    "description": "ETMW Songs API: email-code auth, song library, playlists, and HeartMuLa generation queue.",
+    "type": "module",
+    "private": true,
+    "engines": {
+        "node": ">=20"
+    },
+    "scripts": {
+        "dev": "tsx watch src/server.ts",
+        "build": "tsc -p tsconfig.json",
+        "start": "node dist/server.js",
+        "typecheck": "tsc --noEmit",
+        "api-key:create": "node scripts/create-api-key.mjs"
+    },
+    "dependencies": {
+        "cors": "^2.8.5",
+        "dotenv": "^17.2.3",
+        "express": "^5.1.0",
+        "jsonwebtoken": "^9.0.2",
+        "mongoose": "^8.20.0",
+        "nodemailer": "^10.0.16",
+        "zod": "^4.1.13"
+    },
+    "devDependencies": {
+        "@types/cors": "^2.8.19",
+        "@types/express": "^5.0.5",
+        "@types/jsonwebtoken": "^9.0.10",
+        "@types/node": "^22.10.2",
+        "@types/nodemailer": "^8.0.2",
+        "tsx": "^4.20.6",
+        "typescript": "^5.7.2"
+    }
+}

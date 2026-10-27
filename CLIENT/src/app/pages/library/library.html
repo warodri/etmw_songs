@@ -1,0 +1,119 @@
+<div class="etmw-container songs-page">
+    <header class="songs-page-header">
+        <div class="songs-page-header__copy">
+            <span class="songs-eyebrow">Your studio</span>
+            <h1 class="songs-title">Your library</h1>
+            <p class="songs-subtitle">
+                Every song you have made, ready to play, organise, and put into a playlist.
+                <span class="library-count">{{ songs().length }} {{ songs().length === 1 ? 'song' : 'songs' }}</span>
+            </p>
+        </div>
+        <div class="songs-actions">
+            <a routerLink="/create" class="songs-btn songs-btn--primary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg>
+                Create a song
+            </a>
+            <a routerLink="/playlists" class="songs-btn songs-btn--ghost">Playlists</a>
+        </div>
+    </header>
+
+    @if (playlists().length > 0) {
+        <section class="library-playlists">
+            <div class="library-playlists__head">
+                <span>Playlists</span>
+                <a routerLink="/playlists">Manage all</a>
+            </div>
+            <div class="library-playlists__row">
+                @for (playlist of playlists(); track playlist.id) {
+                    <a class="library-playlist-chip" [routerLink]="['/playlists', playlist.id]">
+                        <span class="library-playlist-chip__icon">♫</span>
+                        <span class="library-playlist-chip__name">{{ playlist.name }}</span>
+                        <span class="library-playlist-chip__count">{{ playlist.songCount }}</span>
+                    </a>
+                }
+            </div>
+        </section>
+    }
+
+    <div class="library-toolbar">
+        <div class="library-search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="17" height="17"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input
+                type="search"
+                placeholder="Search titles, lyrics, or tags…"
+                [ngModel]="search()"
+                (ngModelChange)="search.set($event)"
+            />
+        </div>
+
+        <select class="songs-select library-sort" [ngModel]="sort()" (ngModelChange)="sort.set($event)">
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="title">Title A–Z</option>
+        </select>
+    </div>
+
+    @if (tags().length > 0) {
+        <div class="songs-chip-row library-tags">
+            <button type="button" class="songs-chip" [class.songs-chip--active]="tag() === null" (click)="tag.set(null)">All</button>
+            @for (item of tags(); track item) {
+                <button type="button" class="songs-chip" [class.songs-chip--active]="tag() === item" (click)="tag.set(tag() === item ? null : item)">
+                    {{ item }}
+                </button>
+            }
+        </div>
+    }
+
+    @if (loading()) {
+        <div class="songs-loading"><span class="songs-spinner"></span> Loading your songs…</div>
+    } @else if (error()) {
+        <div class="songs-empty">
+            <h3>We could not open your library.</h3>
+            <p>{{ error() }}</p>
+            <button type="button" class="songs-btn songs-btn--primary" (click)="load()">Try again</button>
+        </div>
+    } @else if (songs().length === 0) {
+        <div class="songs-empty">
+            <h3>Your first song is waiting.</h3>
+            <p>Write a few lines, choose a style, and let the studio turn them into music. It takes a few minutes.</p>
+            <a routerLink="/create" class="songs-btn songs-btn--primary">Create your first song</a>
+        </div>
+    } @else if (filteredSongs().length === 0) {
+        <div class="songs-empty">
+            <h3>No songs match that.</h3>
+            <p>Try a different search or tag.</p>
+            <button type="button" class="songs-btn songs-btn--ghost" (click)="search.set(''); tag.set(null)">Clear filters</button>
+        </div>
+    } @else {
+        <div class="library-grid">
+            @for (song of filteredSongs(); track song.id) {
+                <app-song-card
+                    [song]="song"
+                    [playlists]="playlists()"
+                    [isCurrent]="isCurrent(song)"
+                    [isPlaying]="isCurrent(song) && player.isPlaying()"
+                    (play)="play(song)"
+                    (delete)="requestDelete(song)"
+                    (add)="addToPlaylist($event, song)"
+                />
+            }
+        </div>
+    }
+</div>
+
+@if (pendingDelete(); as song) {
+    <div class="songs-modal-backdrop" (click)="pendingDelete.set(null)">
+        <div class="songs-modal" (click)="$event.stopPropagation()">
+            <h2>Delete “{{ song.title }}”?</h2>
+            <p class="songs-modal__lead">The audio file will be removed from your library and from any playlists. This cannot be undone.</p>
+            <div class="songs-modal__actions">
+                <button type="button" class="songs-btn songs-btn--ghost" (click)="pendingDelete.set(null)">Keep it</button>
+                <button type="button" class="songs-btn songs-btn--danger" (click)="confirmDelete()">Delete song</button>
+            </div>
+        </div>
+    </div>
+}
+
+@if (toast(); as message) {
+    <div class="songs-toast">{{ message }}</div>
+}

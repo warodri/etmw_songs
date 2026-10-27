@@ -1,0 +1,15 @@
+{
+    "name": "etmw-songs",
+    "version": "1.0.0",
+    "private": true,
+    "description": "ETMW Songs — private AI music studio, Angular client and Node API.",
+    "scripts": {
+        "build-client": "npm --prefix CLIENT run build",
+        "build-server": "npm --prefix SERVER run build",
+        "upload-client": "bash scripts/upload.client.sh",
+        "upload-server": "bash scripts/upload.server.sh",
+        "configure-apache": "bash scripts/configure-apache.sh",
+        "upload-all": "bash scripts/upload-all.sh",
+        "setup-local-engine": "bash scripts/setup-local-engine.sh"
+    }
+}

@@ -1,0 +1,96 @@
+<section class="login">
+    <div class="login__visual">
+        <img src="hero.jpg" alt="" class="login__hero" />
+        <div class="login__veil"></div>
+        <div class="login__visual-content">
+            <img src="logo-horizontal.png" alt="ETMW Songs" class="login__logo" />
+            <h1>Your words.<br />Your sound.<br /><span>Your world.</span></h1>
+            <p>
+                A private music studio that turns your lyrics into finished songs.
+                Write, generate, collect, and build playlists — all in one place.
+            </p>
+            <div class="login__features">
+                <span>Lyrics to music</span>
+                <span>Your private library</span>
+                <span>Playlists that flow</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="login__panel">
+        <div class="login__card">
+            <div class="login__brand-mobile">
+                <img src="logo-squared.png" alt="ETMW Songs" />
+            </div>
+            <span class="login__eyebrow">ETMW Songs</span>
+
+            @if (step() === 'email') {
+                <h2>Sign in with your email</h2>
+                <p class="login__lead">We will send a 6-digit code. No passwords to remember.</p>
+
+                <form (ngSubmit)="sendCode()" class="login__form">
+                    <label class="login__label" for="email">Email address</label>
+                    <input
+                        id="email"
+                        class="login__input"
+                        type="email"
+                        name="email"
+                        [(ngModel)]="email"
+                        placeholder="you@example.com"
+                        autocomplete="email"
+                        autofocus
+                    />
+
+                    @if (error()) {
+                        <p class="login__error">{{ error() }}</p>
+                    }
+
+                    <button type="submit" class="songs-btn songs-btn--primary songs-btn--block" [disabled]="loading()">
+                        {{ loading() ? 'Sending…' : 'Send login code' }}
+                    </button>
+                </form>
+            } @else {
+                <h2>Check your inbox</h2>
+                <p class="login__lead">
+                    We sent a code to <strong>{{ email() }}</strong>. Enter it below to open your studio.
+                </p>
+
+                <form (ngSubmit)="verify()" class="login__form">
+                    <label class="login__label" for="code">6-digit code</label>
+                    <input
+                        id="code"
+                        class="login__input login__input--code"
+                        type="text"
+                        name="code"
+                        [(ngModel)]="code"
+                        placeholder="000000"
+                        inputmode="numeric"
+                        maxlength="6"
+                        autocomplete="one-time-code"
+                        autofocus
+                    />
+
+                    @if (message()) {
+                        <p class="login__hint">{{ message() }}</p>
+                    }
+                    @if (error()) {
+                        <p class="login__error">{{ error() }}</p>
+                    }
+
+                    <button type="submit" class="songs-btn songs-btn--primary songs-btn--block" [disabled]="loading()">
+                        {{ loading() ? 'Verifying…' : 'Open my studio' }}
+                    </button>
+
+                    <div class="login__secondary">
+                        <button type="button" (click)="sendCode()" [disabled]="cooldown() > 0 || loading()">
+                            {{ cooldown() > 0 ? 'Resend in ' + cooldown() + 's' : 'Resend code' }}
+                        </button>
+                        <button type="button" (click)="useDifferentEmail()">Use another email</button>
+                    </div>
+                </form>
+            }
+
+            <p class="login__fineprint">By continuing you agree to use this studio responsibly. Your songs stay tied to your email account.</p>
+        </div>
+    </div>
+</section>

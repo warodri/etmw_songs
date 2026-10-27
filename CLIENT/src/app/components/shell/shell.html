@@ -1,0 +1,50 @@
+<div class="songs-shell">
+    <header class="songs-header">
+        <div class="etmw-container songs-header__inner">
+            <a routerLink="/library" class="songs-brand" (click)="closeMobile()">
+                <img src="logo-horizontal.png" alt="ETMW Songs" />
+            </a>
+
+            <nav class="songs-nav" [class.songs-nav--open]="mobileOpen()">
+                <a routerLink="/library" routerLinkActive="active" (click)="closeMobile()">Library</a>
+                <a routerLink="/create" routerLinkActive="active" (click)="closeMobile()">Create</a>
+                <a routerLink="/playlists" routerLinkActive="active" (click)="closeMobile()">Playlists</a>
+            </nav>
+
+            <div class="songs-header__actions">
+                <span
+                    class="songs-engine"
+                    [class.songs-engine--online]="engineOnline() === true"
+                    [class.songs-engine--offline]="engineOnline() === false"
+                >
+                    <span class="songs-engine__dot"></span>
+                    @if (engineOnline() === null) {
+                        Checking
+                    } @else if (engineOnline()) {
+                        Engine online
+                    } @else {
+                        Engine offline
+                    }
+                </span>
+
+                <span class="songs-user" [title]="auth.user()?.email ?? ''">
+                    {{ auth.user()?.name || auth.user()?.email }}
+                </span>
+
+                <button type="button" class="songs-btn songs-btn--ghost songs-btn--sm" (click)="logout()">
+                    Log out
+                </button>
+
+                <button type="button" class="songs-menu-toggle" (click)="mobileOpen.set(!mobileOpen())" aria-label="Toggle navigation">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="songs-main" [class.songs-main--with-player]="player.currentSong()">
+        <router-outlet />
+    </main>
+
+    <app-player-bar />
+</div>

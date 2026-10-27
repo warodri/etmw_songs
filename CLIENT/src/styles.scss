@@ -1,0 +1,494 @@
+/* ==========================================================================
+   Global Theme & Design System — Enter To My World (ETMW)
+   Aesthetic: Sleek, high-contrast Dark Mode with vibrant Orange & Amber accents
+   ========================================================================== */
+
+:root {
+    /* Brand Orange & Amber Palette */
+    --etmw-primary: #F97316;
+    --etmw-primary-hover: #EA580C;
+    --etmw-primary-active: #C2410C;
+    --etmw-primary-light: rgba(249, 115, 22, 0.12);
+    --etmw-primary-muted: rgba(249, 115, 22, 0.2);
+    --etmw-primary-glow: rgba(249, 115, 22, 0.35);
+    --etmw-primary-gradient: linear-gradient(135deg, #F97316 0%, #FB923C 50%, #F59E0B 100%);
+
+    /* Dark Theme Backgrounds */
+    --etmw-bg-canvas: #0D0B0A;
+    --etmw-bg-subtle: #141210;
+    --etmw-bg-surface: #1C1917;
+    --etmw-bg-card: #181513;
+    --etmw-bg-accent: #24201D;
+
+    /* Text & Typography (High Contrast for Dark Theme) */
+    --etmw-text-main: #FAF8F5;
+    --etmw-text-muted: #B8B0A8;
+    --etmw-text-subtle: #7E766F;
+    --etmw-text-on-primary: #FFFFFF;
+
+    /* Borders & Dividers */
+    --etmw-border-light: rgba(255, 255, 255, 0.06);
+    --etmw-border-subtle: rgba(255, 255, 255, 0.08);
+    --etmw-border-card: rgba(249, 115, 22, 0.16);
+
+    /* Elevations & Shadows */
+    --etmw-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
+    --etmw-shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
+    --etmw-shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.65);
+    --etmw-shadow-hover: 0 20px 48px rgba(249, 115, 22, 0.16);
+
+    /* Radii */
+    --etmw-radius-sm: 8px;
+    --etmw-radius-md: 16px;
+    --etmw-radius-lg: 24px;
+    --etmw-radius-xl: 32px;
+    --etmw-radius-full: 9999px;
+
+    /* Fonts */
+    --etmw-font-title: 'Fredoka', 'Plus Jakarta Sans', -apple-system, sans-serif;
+    --etmw-font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Reset & Box Sizing */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    height: 100%;
+    scroll-behavior: smooth;
+    font-size: 16px;
+    background-color: var(--etmw-bg-canvas);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    min-height: 100%;
+    background-color: var(--etmw-bg-canvas);
+    color: var(--etmw-text-main);
+    font-family: var(--etmw-font-body);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* Typography Helpers */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--etmw-font-title);
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--etmw-text-main);
+    letter-spacing: -0.01em;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+button {
+    font-family: inherit;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Global Container */
+.etmw-container {
+    width: 100%;
+    max-width: 1240px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .etmw-container {
+        padding-left: 2.5rem;
+        padding-right: 2.5rem;
+    }
+}
+
+/* ==========================================================================
+   ETMW Songs — app design system
+   ========================================================================== */
+
+.songs-page {
+    padding-bottom: 3rem;
+}
+
+.songs-page-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-bottom: 1.8rem;
+}
+
+.songs-page-header__copy {
+    max-width: 720px;
+}
+
+.songs-eyebrow {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--etmw-primary);
+    margin-bottom: 0.45rem;
+}
+
+.songs-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+}
+
+.songs-subtitle {
+    color: var(--etmw-text-muted);
+    font-size: 0.95rem;
+    line-height: 1.65;
+    max-width: 640px;
+}
+
+.songs-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    flex-wrap: wrap;
+}
+
+.songs-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    min-height: 44px;
+    padding: 0.7rem 1.2rem;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 0.88rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--etmw-text-main);
+    background: var(--etmw-bg-surface);
+    border: 1px solid var(--etmw-border-subtle);
+    transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+    white-space: nowrap;
+
+    &:hover:not(:disabled) {
+        background: var(--etmw-bg-accent);
+        border-color: var(--etmw-border-card);
+    }
+
+    &:active:not(:disabled) {
+        transform: translateY(1px);
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+}
+
+.songs-btn--primary {
+    color: #fff;
+    background: var(--etmw-primary);
+    border-color: var(--etmw-primary);
+    box-shadow: 0 10px 26px rgba(249, 115, 22, 0.24);
+
+    &:hover:not(:disabled) {
+        background: var(--etmw-primary-hover);
+        border-color: var(--etmw-primary-hover);
+    }
+}
+
+.songs-btn--ghost {
+    background: transparent;
+    border-color: var(--etmw-border-subtle);
+    color: var(--etmw-text-muted);
+
+    &:hover:not(:disabled) {
+        color: var(--etmw-text-main);
+        background: rgba(255, 255, 255, 0.04);
+    }
+}
+
+.songs-btn--danger {
+    color: #fca5a5;
+    border-color: rgba(239, 68, 68, 0.24);
+    background: rgba(239, 68, 68, 0.06);
+
+    &:hover:not(:disabled) {
+        background: rgba(239, 68, 68, 0.14);
+        border-color: rgba(239, 68, 68, 0.4);
+    }
+}
+
+.songs-btn--sm {
+    min-height: 36px;
+    padding: 0.45rem 0.8rem;
+    font-size: 0.78rem;
+    border-radius: 10px;
+}
+
+.songs-btn--block {
+    width: 100%;
+}
+
+.songs-input,
+.songs-textarea,
+.songs-select {
+    width: 100%;
+    background: var(--etmw-bg-card);
+    border: 1px solid var(--etmw-border-subtle);
+    border-radius: 12px;
+    color: var(--etmw-text-main);
+    font-family: inherit;
+    font-size: 0.92rem;
+    padding: 0.8rem 0.95rem;
+    outline: none;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+
+    &:focus {
+        border-color: var(--etmw-primary);
+        box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.12);
+    }
+
+    &::placeholder {
+        color: var(--etmw-text-subtle);
+    }
+}
+
+.songs-textarea {
+    min-height: 220px;
+    resize: vertical;
+    line-height: 1.65;
+}
+
+.songs-select {
+    appearance: none;
+    background-image: linear-gradient(45deg, transparent 50%, var(--etmw-text-muted) 50%),
+        linear-gradient(135deg, var(--etmw-text-muted) 50%, transparent 50%);
+    background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%;
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+    padding-right: 2.2rem;
+}
+
+.songs-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.songs-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--etmw-text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.songs-label__hint {
+    font-size: 0.7rem;
+    font-weight: 400;
+    color: var(--etmw-text-subtle);
+}
+
+.songs-card {
+    background: var(--etmw-bg-card);
+    border: 1px solid var(--etmw-border-light);
+    border-radius: 20px;
+    padding: 1.4rem;
+}
+
+.songs-empty {
+    text-align: center;
+    padding: 4rem 1.5rem;
+    border: 1px dashed var(--etmw-border-subtle);
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.015);
+
+    h3 {
+        font-size: 1.35rem;
+        margin-bottom: 0.4rem;
+    }
+
+    p {
+        color: var(--etmw-text-muted);
+        font-size: 0.9rem;
+        max-width: 460px;
+        margin: 0 auto 1.2rem;
+        line-height: 1.6;
+    }
+}
+
+.songs-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    background: rgba(5, 4, 3, 0.72);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.25rem;
+    animation: fade-in 0.16s ease both;
+}
+
+.songs-modal {
+    width: 100%;
+    max-width: 520px;
+    max-height: min(88vh, 720px);
+    overflow-y: auto;
+    background: var(--etmw-bg-surface);
+    border: 1px solid var(--etmw-border-subtle);
+    border-radius: 22px;
+    padding: 1.6rem;
+    box-shadow: var(--etmw-shadow-lg);
+    animation: modal-rise 0.2s ease both;
+
+    h2 {
+        font-size: 1.4rem;
+        margin-bottom: 0.35rem;
+    }
+}
+
+.songs-modal__lead {
+    color: var(--etmw-text-muted);
+    font-size: 0.88rem;
+    line-height: 1.6;
+    margin-bottom: 1.2rem;
+}
+
+.songs-modal__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.6rem;
+    margin-top: 1.4rem;
+}
+
+.songs-toast {
+    position: fixed;
+    left: 50%;
+    bottom: 7.5rem;
+    transform: translateX(-50%);
+    z-index: 90;
+    max-width: min(92vw, 520px);
+    padding: 0.8rem 1.1rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--etmw-text-main);
+    background: var(--etmw-bg-accent);
+    border: 1px solid var(--etmw-border-card);
+    box-shadow: var(--etmw-shadow-lg);
+    animation: fade-in 0.18s ease both;
+}
+
+.songs-error {
+    font-size: 0.82rem;
+    color: #fca5a5;
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.18);
+    padding: 0.65rem 0.8rem;
+    border-radius: 10px;
+}
+
+.songs-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 3rem;
+    color: var(--etmw-text-subtle);
+    font-size: 0.85rem;
+}
+
+.songs-spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255, 255, 255, 0.16);
+    border-top-color: var(--etmw-primary);
+    border-radius: 50%;
+    animation: songs-spin 0.8s linear infinite;
+}
+
+.songs-chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.songs-chip {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--etmw-text-muted);
+    background: var(--etmw-bg-card);
+    border: 1px solid var(--etmw-border-subtle);
+    padding: 0.4rem 0.65rem;
+    border-radius: 999px;
+    transition: all 0.16s ease;
+
+    &:hover {
+        color: var(--etmw-text-main);
+        border-color: var(--etmw-border-card);
+    }
+
+    &--active {
+        color: var(--etmw-primary);
+        background: var(--etmw-primary-light);
+        border-color: rgba(249, 115, 22, 0.28);
+    }
+}
+
+.songs-range {
+    width: 100%;
+    accent-color: var(--etmw-primary);
+}
+
+@keyframes songs-spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes modal-rise {
+    from { opacity: 0; transform: translateY(12px) scale(0.985); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 720px) {
+    .songs-page-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .songs-actions {
+        width: 100%;
+    }
+
+    .songs-toast {
+        bottom: 9rem;
+    }
+}

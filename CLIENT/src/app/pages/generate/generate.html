@@ -1,0 +1,239 @@
+<div class="etmw-container songs-page">
+    <header class="songs-page-header">
+        <div class="songs-page-header__copy">
+            <span class="songs-eyebrow">The studio</span>
+            <h1 class="songs-title">Create a song</h1>
+            <p class="songs-subtitle">
+                Write your lyrics, describe the sound, and the studio will turn it into a finished track.
+                A one-minute song usually takes a few minutes.
+            </p>
+        </div>
+        <div class="songs-actions">
+            <a routerLink="/library" class="songs-btn songs-btn--ghost">Back to library</a>
+        </div>
+    </header>
+
+    <div class="generate-layout">
+        <section class="songs-card generate-form">
+            <div class="songs-field">
+                <label class="songs-label" for="song-title">
+                    Title
+                    <span class="songs-label__hint">optional</span>
+                </label>
+                <input
+                    id="song-title"
+                    class="songs-input"
+                    type="text"
+                    maxlength="120"
+                    placeholder="Give it a name, or we will use the first line"
+                    [ngModel]="title()"
+                    (ngModelChange)="title.set($event)"
+                />
+            </div>
+
+            <div class="songs-field">
+                <label class="songs-label" for="lyrics">
+                    Lyrics
+                    <span class="songs-label__hint">{{ lyrics().length }} / 20,000</span>
+                </label>
+                <textarea
+                    id="lyrics"
+                    class="songs-textarea"
+                    maxlength="20000"
+                    [ngModel]="lyrics()"
+                    (ngModelChange)="lyrics.set($event)"
+                ></textarea>
+                <div class="generate-lyrics-actions">
+                    <button type="button" class="songs-btn songs-btn--ghost songs-btn--sm" (click)="lyrics.set('[Verse]\nNew words for a new song\nA melody to carry on\n\n[Chorus]\nSing it once and sing it loud\nMake it yours and make it proud')">
+                        Start a fresh example
+                    </button>
+                    <span>Use [Verse], [Chorus], [Bridge] to shape the song.</span>
+                </div>
+            </div>
+
+            <div class="songs-field">
+                <label class="songs-label" for="tags">
+                    Style tags
+                    <span class="songs-label__hint">comma separated</span>
+                </label>
+                <input
+                    id="tags"
+                    class="songs-input"
+                    type="text"
+                    maxlength="600"
+                    placeholder="pop, warm, female voice, piano"
+                    [ngModel]="tagsInput()"
+                    (ngModelChange)="tagsInput.set($event)"
+                />
+                <div class="songs-chip-row generate-quick-tags">
+                    @for (tag of quickTags; track tag) {
+                        <button
+                            type="button"
+                            class="songs-chip"
+                            [class.songs-chip--active]="hasTag(tag)"
+                            (click)="toggleTag(tag)"
+                        >
+                            {{ tag }}
+                        </button>
+                    }
+                </div>
+            </div>
+
+            <div class="songs-field">
+                <label class="songs-label" for="duration">
+                    Length
+                    <span class="songs-label__value">{{ duration() }} seconds</span>
+                </label>
+                <input
+                    id="duration"
+                    class="songs-range"
+                    type="range"
+                    min="5"
+                    max="240"
+                    step="5"
+                    [ngModel]="duration()"
+                    (ngModelChange)="setDuration($event)"
+                />
+                <div class="generate-length-labels">
+                    <span>5s</span>
+                    <span>1 min</span>
+                    <span>2 min</span>
+                    <span>4 min</span>
+                </div>
+            </div>
+
+            <details class="generate-advanced" [open]="advancedOpen()" (toggle)="advancedOpen.set($any($event.target).open)">
+                <summary>Advanced controls</summary>
+                <div class="generate-advanced__grid">
+                    <div class="songs-field">
+                        <label class="songs-label" for="topk">Top-k <span class="songs-label__hint">{{ topk() }}</span></label>
+                        <input id="topk" class="songs-range" type="range" min="1" max="200" [ngModel]="topk()" (ngModelChange)="topk.set(+$event)" />
+                    </div>
+                    <div class="songs-field">
+                        <label class="songs-label" for="temperature">Temperature <span class="songs-label__hint">{{ temperature() }}</span></label>
+                        <input id="temperature" class="songs-range" type="range" min="0.1" max="2" step="0.1" [ngModel]="temperature()" (ngModelChange)="temperature.set(+$event)" />
+                    </div>
+                    <div class="songs-field">
+                        <label class="songs-label" for="cfg">Guidance (CFG) <span class="songs-label__hint">{{ cfgScale() }}</span></label>
+                        <input id="cfg" class="songs-range" type="range" min="1" max="10" step="0.5" [ngModel]="cfgScale()" (ngModelChange)="cfgScale.set(+$event)" />
+                    </div>
+                    <div class="songs-field">
+                        <label class="songs-label" for="seed">Seed <span class="songs-label__hint">optional</span></label>
+                        <input id="seed" class="songs-input" type="number" placeholder="Random" [ngModel]="seedInput()" (ngModelChange)="seedInput.set($event)" />
+                    </div>
+                </div>
+            </details>
+
+            @if (error()) {
+                <p class="songs-error">{{ error() }}</p>
+            }
+
+            <button
+                type="button"
+                class="songs-btn songs-btn--primary songs-btn--block generate-submit"
+                [disabled]="submitting()"
+                (click)="submit()"
+            >
+                @if (submitting()) {
+                    <span class="songs-spinner"></span> Sending to the studio…
+                } @else {
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="17" height="17"><path d="M12 3v18M3 12h18"/></svg>
+                    Generate song
+                }
+            </button>
+
+            @if (engineOnline() === false) {
+                <p class="generate-engine-warning">
+                    The music engine is offline right now. You can still write, but generation will start once it is back.
+                </p>
+            }
+        </section>
+
+        <aside class="generate-side">
+            <section class="songs-card generate-status" [class.generate-status--online]="engineOnline() === true" [class.generate-status--offline]="engineOnline() === false">
+                <div class="generate-status__head">
+                    <span class="generate-status__dot"></span>
+                    <span class="generate-status__label">Music engine</span>
+                    <span class="generate-status__value">
+                        @if (engineOnline() === null) { Checking… } @else if (engineOnline()) { Online } @else { Offline }
+                    </span>
+                </div>
+                <p>
+                    @if (engineOnline()) {
+                        The local studio is awake and ready to compose.
+                    } @else if (engineOnline() === false) {
+                        The local studio is not reachable. Start the engine on the Mac Mini, then try again.
+                    } @else {
+                        Checking the local studio connection…
+                    }
+                </p>
+            </section>
+
+            <section class="songs-card generate-jobs">
+                <div class="generate-jobs__head">
+                    <h2>Studio queue</h2>
+                    <span>{{ activeJobs().length }} active</span>
+                </div>
+
+                @if (jobs().length === 0) {
+                    <p class="generate-jobs__empty">Nothing in the queue yet. Your generated songs will appear here.</p>
+                } @else {
+                    <div class="generate-jobs__list">
+                        @for (job of jobs(); track job.id) {
+                            <article class="generate-job" [class]="'generate-job generate-job--' + job.status">
+                                <div class="generate-job__top">
+                                    <strong>{{ job.title }}</strong>
+                                    <span class="generate-job__status">{{ statusLabel(job) }}</span>
+                                </div>
+                                <div class="generate-job__meta">
+                                    <span>{{ job.durationSeconds }}s</span>
+                                    <span>{{ elapsed(job) }}</span>
+                                    @if (job.status === 'generating') {
+                                        <span class="generate-job__pulse">composing</span>
+                                    }
+                                </div>
+                                <div class="generate-job__tags">
+                                    @for (tag of job.tags.slice(0, 4); track tag) {
+                                        <span>{{ tag }}</span>
+                                    }
+                                </div>
+                                @if (job.status === 'generating' || job.status === 'queued') {
+                                    <div class="generate-job__bars">
+                                        @for (bar of [30, 60, 45, 80, 55, 90, 40, 70, 50, 85]; track $index) {
+                                            <span [style.height.%]="bar"></span>
+                                        }
+                                    </div>
+                                }
+                                @if (job.error) {
+                                    <p class="generate-job__error">{{ job.error }}</p>
+                                }
+                                <div class="generate-job__actions">
+                                    @if (job.status === 'completed' && job.songId) {
+                                        <button type="button" class="songs-btn songs-btn--primary songs-btn--sm" (click)="playJob(job)">Play now</button>
+                                        <a routerLink="/library" class="songs-btn songs-btn--ghost songs-btn--sm">Library</a>
+                                    }
+                                    @if (job.status === 'queued') {
+                                        <button type="button" class="songs-btn songs-btn--ghost songs-btn--sm" (click)="cancel(job)">Cancel</button>
+                                    }
+                                </div>
+                            </article>
+                        }
+                    </div>
+                }
+            </section>
+
+            <section class="songs-card generate-tips">
+                <h2>How it works</h2>
+                <ol>
+                    <li><strong>Write.</strong> Verse and chorus tags help the model follow the song structure.</li>
+                    <li><strong>Describe.</strong> Genre first, then moods, instruments, and voice type.</li>
+                    <li><strong>Wait.</strong> The engine works through the queue one song at a time.</li>
+                </ol>
+            </section>
+        </aside>
+    </div>
+</div>
+
+@if (toast(); as message) {
+    <div class="songs-toast">{{ message }}</div>
+}
